@@ -1,0 +1,119 @@
+Covid_19 Data Exploration using Big Query
+
+Open source Data
+
+Link of data set:  https://ourworldindata.org/covid-deaths
+
+Link of google cloud platform 
+
+https://console.cloud.google.com/bigquery?sq=755071359829:eab8871144e340fdac2990d9f2ca066c
+
+
+
+
+--Looking covid 19 data set
+
+select location,date, total_cases, total_deaths,population
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+order by 1,2
+
+-- 1.Looking at Total Cases Vs Total Deaths in our country (India)
+
+select location,date, total_cases, total_deaths,(total_deaths/total_cases)*100 as DeathPercentage
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+where location = 'India'
+order by 1,2
+
+-- 2.Looking at Total Cases vs Population
+-- shows what percentage of population got Covid
+
+select location,date, total_cases, population,(total_deaths/population)*100 as Percentage_Population_Infecte
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+order by 1,2
+
+-- 3.Looking at Countries with Highest Infection RAte compared to Population
+
+select location, population,MAX(total_cases) as Highest_Infection_count, Max(total_deaths/population)*100 as Percentage_Population_Infected
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+Group by location, population
+order by Percentage_Population_Infected desc
+
+-- 4. Showing Countries with highest death count per Population
+
+select location, Max(Total_deaths) as Total_death_count
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+where continent is not null
+Group by location
+order by Total_death_count desc
+
+-- 5. Let's break Things down by continent
+
+select continent, Max(Total_deaths) as Total_death_count
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+where continent is not null
+Group by continent
+order by Total_death_count desc
+
+
+
+-- 6. Showing continents with the highest death count per population
+
+select continent, Max(Total_deaths) as Total_death_count
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+where continent is not null
+Group by continent
+order by Total_death_count desc
+
+-- 7. Global Numbers
+
+select date, Sum(new_cases) as total_cases, Sum(new_deaths)as total_deaths, Sum(new_deaths)/Sum(new_cases)*100 as DeathPercentage
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+where continent is not null
+group by date
+order by 1,2
+
+-- 8. Looking at Total population vs vaccinations
+
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+from `portfolio-project-1-344806.Covid19.covidDeaths` dea
+join  `portfolio-project-1-344806.Covid19.vaccination_data` vac 
+    on dea.location = vac.location
+    and dea.date = vac.date
+where dea.continent is not null 
+order by 2,3
+
+Covid_19 Data Exploration for Tableau Dashboard
+Link of google cloud platform
+https://console.cloud.google.com/bigquery?sq=755071359829:b4e9b8dcc0fd4b5d87b77c65b26c5c04
+
+1. Total cases and total death
+select location,date, total_cases, total_deaths,population
+from `portfolio-project-1-344806.Covid19.covidDeaths`
+order by 1,2
+
+2. 
+
+Select location, SUM(cast(new_deaths as int)) as TotalDeathCount
+From `portfolio-project-1-344806.Covid19.covidDeaths`
+
+Where continent is null 
+and location not in ('World', 'European Union', 'International')
+Group by location
+order by TotalDeathCount desc
+
+-- 3.
+
+Select Location, Population,date, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From `portfolio-project-1-344806.Covid19.covidDeaths`
+Group by Location, Population, date
+order by PercentPopulationInfected desc
+
+-- 4
+
+Select Location, Population,date, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From `portfolio-project-1-344806.Covid19.covidDeaths`
+Group by Location, Population, date
+order by PercentPopulationInfected desc
+
+
+
